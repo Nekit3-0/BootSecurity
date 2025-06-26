@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "role")
 public class Role implements GrantedAuthority {
 
     @Id
@@ -16,7 +16,11 @@ public class Role implements GrantedAuthority {
     @Column(name = "role")
     private String role;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn (name="user_id")
+    )
     private List<User> users;
 
     public Role() {}
@@ -43,6 +47,6 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return role;
+        return getRole();
     }
 }

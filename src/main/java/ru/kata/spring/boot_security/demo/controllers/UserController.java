@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserServiceImpl userService;
@@ -23,10 +23,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user")
+    @GetMapping
     public String userPage(Principal principal, Model model) {
-        model.addAttribute("user", userService.findUserByLogin(principal.getName()));
-        return "user-list";
+        model.addAttribute("user", userService.getUserByLogin(principal.getName()));
+        return "user";
     }
 
 
