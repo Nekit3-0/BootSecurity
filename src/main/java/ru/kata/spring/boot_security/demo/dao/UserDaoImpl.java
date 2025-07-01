@@ -2,10 +2,12 @@ package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
@@ -25,6 +27,10 @@ public class UserDaoImpl implements UserDao {
                         "SELECT user FROM User user join fetch  user.roles WHERE user.login =:login", User.class)
                 .setParameter("login", login)
                 .getSingleResult();
+        /*TypedQuery<User> query = entityManager.createQuery(
+                "SELECT u FROM User u WHERE u.login = :login", User.class);
+        query.setParameter("login", login);
+        return query.getResultList().stream().findFirst().orElse(null); */
     }
 
     @Override
@@ -53,7 +59,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> listUsers() {
-
-        return entityManager.createQuery("From User", User.class).getResultList();
+        return entityManager.createQuery("SELECT u FROM User u JOIN FETCH u.roles", User.class)
+                .getResultList();
     }
 }

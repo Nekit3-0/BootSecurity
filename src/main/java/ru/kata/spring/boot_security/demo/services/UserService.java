@@ -10,8 +10,6 @@ public interface UserService {
 
     User getUserById(Long id);
 
-    User getUserByLogin(String login);
-
     void updateUserById(User user);
 
     void removeUserById(Long id);

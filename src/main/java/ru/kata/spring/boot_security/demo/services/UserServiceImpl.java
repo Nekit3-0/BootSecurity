@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.models.User;
@@ -18,12 +19,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     private final UserDao userDao;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -31,17 +32,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void saveUser(User user) {
 
         userDao.saveUser(user);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
     }
 
     @Override
     public User getUserById(Long id) {
         return userDao.getUserById(id);
-    }
-
-    @Override
-    public User getUserByLogin(String login) {
-        return userDao.getUserByLogin(login);
     }
 
     @Override
@@ -54,11 +50,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userDao.deleteUser(id);
     }
 
+
     @Override
     public List<User> allUsers() {
         return userDao.listUsers();
     }
 
+    @Transactional
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         return userDao.getUserByLogin(login);
